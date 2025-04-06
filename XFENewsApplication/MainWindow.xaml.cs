@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Windows.UI.ViewManagement;
+using XFEExtension.NetCore.WinUIHelper.Utilities.Helper;
 
 namespace XFENewsApplication;
 
@@ -15,6 +16,6 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/Icons/EditorIcon.ico"));
         AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Tall;
-        UISettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(() => AppThemeHelper.ChangeTheme(SystemProfile.Theme));
+        UISettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(() => AppThemeHelper.ChangeTheme(AppThemeHelper.Theme));
     }
 }
