@@ -9,7 +9,7 @@ public partial class SystemProfile : XFEProfile
     public SystemProfile() => ProfilePath = $@"{AppPathHelper.LocalProfile}\{nameof(SystemProfile)}";
 
     [ProfileProperty]
-    private ElementTheme theme;
+    private ElementTheme theme = ElementTheme.Default;
 
     static partial void SetThemeProperty(ref ElementTheme value) => AppThemeHelper.ChangeTheme(value);
 }

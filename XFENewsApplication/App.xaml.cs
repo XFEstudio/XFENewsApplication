@@ -18,7 +18,6 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
-        AppThemeHelper.MainWindow = MainWindow;
         AppThemeHelper.Theme = SystemProfile.Theme;
         PageManager.RegisterPage(typeof(AppShellPage));
         PageManager.RegisterPage(typeof(NewsViewPage));
@@ -43,5 +42,6 @@ public partial class App : Application
     {
         MainWindow.Content = new AppShellPage();
         MainWindow.Activate();
+        AppThemeHelper.MainWindow = MainWindow;
     }
 }

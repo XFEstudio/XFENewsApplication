@@ -5,7 +5,6 @@ using XFEExtension.NetCore.FileExtension;
 using XFEExtension.NetCore.WinUIHelper.Interface.Services;
 using XFEExtension.NetCore.WinUIHelper.Utilities;
 using XFENewsApplication.Core.Utilities.Helpers;
-using XFENewsApplication.Utilities;
 
 namespace XFENewsApplication.ViewModels;
 
