@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using XFEExtension.NetCore.AutoPath;
 
-namespace PDDShopManagementSystem.ClientApplication.Utilities;
+namespace XFENewsApplication.Utilities;
 
 public partial class AppPath
 {

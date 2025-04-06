@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PDDShopManagementSystem.ClientApplication.Utilities.Converter;
+namespace XFENewsApplication.Utilities.Converter;
 
 public class DateTimeConverter : JsonConverter<DateTime>
 {

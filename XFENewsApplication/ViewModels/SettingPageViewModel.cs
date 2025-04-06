@@ -1,6 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
+using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
+using XFEExtension.NetCore.FileExtension;
+using XFEExtension.NetCore.WinUIHelper.Interface.Services;
 using XFEExtension.NetCore.WinUIHelper.Utilities;
+using XFENewsApplication.Core.Utilities.Helpers;
+using XFENewsApplication.Utilities;
 
 namespace XFENewsApplication.ViewModels;
 
@@ -14,4 +19,20 @@ public partial class SettingPageViewModel : ViewModelBase
     string appDataDirectory = AppPathHelper.AppLocalData;
     [ObservableProperty]
     string appDataSize = FileHelper.GetDirectorySize(new(AppPathHelper.AppLocalData)).FileSize();
+    public ISettingService SettingService { get; set; } = ServiceManager.GetService<ISettingService>();
+    public IDialogService DialogService { get; set; } = ServiceManager.GetService<IDialogService>();
+
+
+    [RelayCommand]
+    static void OpenPath(string originalPath) => Process.Start("explorer.exe", originalPath);
+
+    [RelayCommand]
+    async Task ClearCache()
+    {
+        if (await DialogService.ShowDialog("cleanCacheContentDialog") == ContentDialogResult.Primary)
+        {
+            Directory.Delete(AppPathHelper.AppCache, true);
+            AppCacheSize = FileHelper.GetDirectorySize(new(AppPathHelper.AppCache)).FileSize();
+        }
+    }
 }

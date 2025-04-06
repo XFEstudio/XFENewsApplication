@@ -22,6 +22,7 @@ public partial class App : Application
         AppThemeHelper.Theme = SystemProfile.Theme;
         PageManager.RegisterPage(typeof(AppShellPage));
         PageManager.RegisterPage(typeof(NewsViewPage));
+        PageManager.RegisterPage(typeof(SettingPage));
         UnhandledException += App_UnhandledException;
     }
 

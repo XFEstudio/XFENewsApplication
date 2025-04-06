@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using Windows.UI.ViewManagement;
+﻿using Windows.UI.ViewManagement;
 using XFEExtension.NetCore.WinUIHelper.Utilities.Helper;
 
 namespace XFENewsApplication;

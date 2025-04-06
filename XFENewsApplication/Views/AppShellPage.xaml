@@ -35,7 +35,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="MSN新闻" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="MSN">
                     <NavigationViewItem.Icon>
-                        <ImageIcon Source="https://www.msn.com/favicon.ico"></ImageIcon>
+                        <ImageIcon Source="https://www.msn.com/favicon.ico"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

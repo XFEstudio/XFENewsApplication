@@ -1,3 +1,5 @@
+using XFEExtension.NetCore.WinUIHelper.Utilities.Helper;
+
 namespace XFENewsApplication.Views;
 
 /// <summary>
@@ -11,9 +13,6 @@ public sealed partial class SettingPage : Page
     {
         Current = this;
         this.InitializeComponent();
-        ViewModel.DialogService.RegisterDialog(orderFarmingRatioSettingContentDialog);
-        ViewModel.DialogService.RegisterDialog(orderFarmingCountSettingContentDialog);
-        ViewModel.DialogService.RegisterDialog(orderFarmingStartValueSettingContentDialog);
         ViewModel.DialogService.RegisterDialog(cleanCacheContentDialog);
         ViewModel.SettingService.AddComboBox(appThemeComboBox, ProfileHelper.GetEnumProfileSaveFunc<ElementTheme>(), ProfileHelper.GetEnumProfileLoadFuncForComboBox());
         ViewModel.SettingService.Initialize();
