@@ -24,7 +24,7 @@
         <ContentDialog x:Name="cleanCacheContentDialog" Title="清除应用缓存" Content="是否清除应用的所有缓存文件（可以定期清理）" IsPrimaryButtonEnabled="True" IsSecondaryButtonEnabled="True" PrimaryButtonText="确定" SecondaryButtonText="取消" DefaultButton="Primary"/>
         <ScrollView>
             <StackPanel Orientation="Vertical" Spacing="4">
-                <TextBlock Text="外观&amp;行为" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+                <TextBlock Text="外观 &amp; 行为" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
                 <controls:SettingsCard Header="色彩模式" Description="软件显示的主题颜色">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE790;"/>
@@ -35,8 +35,8 @@
                         <ComboBoxItem Content="跟随系统" Tag="Default"/>
                     </ComboBox>
                 </controls:SettingsCard>
-                <TextBlock Text="路径&amp;缓存" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
-                <controls:SettingsCard Header="缓存目录" Description="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}" IsClickEnabled="True"  Command="{x:Bind ViewModel.OpenPathCommand}" CommandParameter="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}">
+                <TextBlock Text="路径 &amp; 缓存" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+                <controls:SettingsCard Header="缓存目录" Description="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}" IsClickEnabled="True" Command="{x:Bind ViewModel.OpenPathCommand}" CommandParameter="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}">
                     <controls:SettingsCard.ActionIcon>
                         <FontIcon Glyph="&#xE8A7;"/>
                     </controls:SettingsCard.ActionIcon>

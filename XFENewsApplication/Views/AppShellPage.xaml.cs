@@ -18,7 +18,7 @@ public sealed partial class AppShellPage : Page
         ViewModel.NavigationViewService.Initialize(navigationView, navigationFrame);
         ViewModel.MessageService.Initialize(messageStackPanel, DispatcherQueue);
         ViewModel.LoadingService.Initialize(loadingGrid, globalLoadingGrid, globalLoadingTextBlock, DispatcherQueue, ViewModel.NavigationViewService.NavigationService);
-        ViewModel.NavigationViewService.NavigateTo<NewsViewPage>();
+        ViewModel.NavigationViewService.NavigateTo<NewsViewPage>("MSN");
     }
 
     private void NavigationView_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)

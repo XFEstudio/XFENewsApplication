@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.0" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
@@ -54,7 +55,7 @@
     <PackageReference Include="XFEExtension.NetCore.TodoHighLight" Version="1.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
-    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.3" />
+    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.6" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="XFENewsApplication.ViewModels" />

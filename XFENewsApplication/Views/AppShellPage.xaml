@@ -32,6 +32,9 @@
             </Grid>
         </Grid>
         <NavigationView x:Name="navigationView" IsBackButtonVisible="Visible" Canvas.ZIndex="0" IsBackEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}" IsSettingsVisible="False" DisplayModeChanged="NavigationView_DisplayModeChanged" PaneOpening="NavigationView_PaneOpening" PaneOpened="NavigationView_PaneOpened" PaneClosing="NavigationView_PaneClosing" PaneClosed="NavigationView_PaneClosed">
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox QueryIcon="Find" PlaceholderText="搜索新闻源"/>
+            </NavigationView.AutoSuggestBox>
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="MSN新闻" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="MSN">
                     <NavigationViewItem.Icon>

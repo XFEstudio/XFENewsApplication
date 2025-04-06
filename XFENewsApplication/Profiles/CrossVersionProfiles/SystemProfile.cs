@@ -11,5 +11,8 @@ public partial class SystemProfile : XFEProfile
     [ProfileProperty]
     private ElementTheme theme = ElementTheme.Default;
 
+    [ProfileProperty]
+    private double sideBarWidth = 450;
+
     static partial void SetThemeProperty(ref ElementTheme value) => AppThemeHelper.ChangeTheme(value);
 }
