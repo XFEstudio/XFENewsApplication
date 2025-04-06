@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "XFENewsApplication (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "XFENewsApplication (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
