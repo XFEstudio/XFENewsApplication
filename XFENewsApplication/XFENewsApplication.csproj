@@ -98,5 +98,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>Assets\icon.png</ApplicationIcon>
   </PropertyGroup>
 </Project>

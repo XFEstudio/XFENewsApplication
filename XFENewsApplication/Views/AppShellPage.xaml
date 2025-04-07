@@ -11,7 +11,7 @@
 
     <Grid x:Name="mainGrid">
         <Grid x:Name="appTitleBar" Canvas.ZIndex="1" Height="{Binding ElementName=navigationView, Path=CompactPaneLength}" IsHitTestVisible="True" VerticalAlignment="Top">
-            <Image Source="/Assets/Icon.ico" HorizontalAlignment="Left" Width="16" Height="16"/>
+            <Image Source="/Assets/icon.png" HorizontalAlignment="Left" Width="16" Height="16"/>
             <TextBlock Text="新闻" VerticalAlignment="Center" TextWrapping="NoWrap" Margin="28,0,0,0"/>
         </Grid>
         <Grid x:Name="rightPanelGrid" Canvas.ZIndex="2" Margin="0,50,0,0">

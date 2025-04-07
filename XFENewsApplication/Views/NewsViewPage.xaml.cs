@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Text;
-using Microsoft.UI.Xaml.Navigation;
+﻿using Microsoft.UI.Xaml.Navigation;
 
 namespace XFENewsApplication.Views;
 
@@ -23,6 +22,18 @@ public sealed partial class NewsViewPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        if (ViewModel.NavigationViewService is not null)
+        {
+            ViewModel.NavigationViewService.ContentMargin = new(0);
+            ViewModel.NavigationViewService.Header = null;
+        }
         ViewModel.NavigationParameterService.OnParameterChange(e.Parameter);
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        if (ViewModel.NavigationViewService is not null)
+            ViewModel.NavigationViewService.ContentMargin = new(0, 48, 0, 0);
     }
 }
