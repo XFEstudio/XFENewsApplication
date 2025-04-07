@@ -15,7 +15,7 @@
     <Page.Resources>
         <converter:URLImageConverter x:Key="URLImageConverter"/>
         <DataTemplate x:Key="TextDataTemplate" x:DataType="model:TextArticlePart">
-            <TextBlock Margin="0,10" Text="{x:Bind Content}" FontSize="{x:Bind FontSize}" FontWeight="{x:Bind FontWeight}" TextWrapping="Wrap"/>
+            <TextBlock Margin="0,10" Text="{x:Bind Content}" FontSize="{x:Bind FontSize}" FontWeight="{x:Bind FontWeight}" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
         </DataTemplate>
         <DataTemplate x:Key="ImageDataTemplate" x:DataType="model:ImageArticlePart">
             <Image Source="{x:Bind Content, Converter={StaticResource URLImageConverter}}"/>

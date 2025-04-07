@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.UI.Text;
 using System.Text.Json;
+using XFEExtension.NetCore.StringExtension;
 using XFENewsApplication.Models;
 
 namespace XFENewsApplication.Utilities.Helper;
@@ -30,6 +31,8 @@ public static class ArticleDisplayHelper
                     Content = imageDictionary[node.GetAttributeValue("data-document-id", string.Empty).Replace("\"", string.Empty)]
                 });
             if (node.HasChildNodes)
+                continue;
+            if (node.InnerText.IsNullOrWhiteSpace())
                 continue;
             articleParts.Add(new TextArticlePart
             {
