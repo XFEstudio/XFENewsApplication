@@ -5,10 +5,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:XFENewsApplication.Views"
     xmlns:coremodel="using:XFENewsApplication.Core.Models"
+    xmlns:model="using:XFENewsApplication.Models"
+    xmlns:converter="using:XFEExtension.NetCore.WinUIHelper.Utilities.Converter"
+    xmlns:selector="using:XFENewsApplication.Utilities.Selector"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Page.Resources>
+        <converter:URLImageConverter x:Key="URLImageConverter"/>
+        <DataTemplate x:Key="TextDataTemplate" x:DataType="model:TextArticlePart">
+            <TextBlock Margin="0,10" Text="{x:Bind Content}" FontSize="{x:Bind FontSize}" FontWeight="{x:Bind FontWeight}" TextWrapping="Wrap"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ImageDataTemplate" x:DataType="model:ImageArticlePart">
+            <Image Source="{x:Bind Content, Converter={StaticResource URLImageConverter}}"/>
+        </DataTemplate>
+        <selector:ArticleDataTemplateSelector x:Key="ArticleDataTemplateSelector" DefaultDataTemplate="{StaticResource TextDataTemplate}" TextDataTemplate="{StaticResource TextDataTemplate}" ImageDataTemplate="{StaticResource ImageDataTemplate}"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -35,10 +48,14 @@
             </ListView>
         </Border>
         <controls:ContentSizer Grid.Column="1" TargetControl="{x:Bind sideBar}" CornerRadius="4"/>
-        <Grid Grid.Column="2">
-            <ScrollView>
-                <StackPanel x:Name="contentStackPanel" Orientation="Vertical" Spacing="10"/>
-            </ScrollView>
-        </Grid>
+        <Border Grid.Column="2">
+            <ListView x:Name="contentListView" ItemsSource="{x:Bind ViewModel.ContentList}" SelectionMode="None" ItemTemplateSelector="{StaticResource ArticleDataTemplateSelector}">
+                <ListView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Border>
     </Grid>
 </Page>

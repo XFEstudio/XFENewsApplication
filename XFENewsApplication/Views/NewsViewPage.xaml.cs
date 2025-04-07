@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Navigation;
+﻿using Microsoft.UI.Text;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace XFENewsApplication.Views;
 
@@ -15,8 +16,8 @@ public sealed partial class NewsViewPage : Page
         Current = this;
         this.InitializeComponent();
         ViewModel.NavigationParameterService.Initialize(this);
-        ViewModel.ListViewService.Initialize(newsSourceListView);
-        ViewModel.WebViewService.Initialize(webView);
+        ViewModel.NewsListViewService.Initialize(newsSourceListView);
+        ViewModel.ContentListViewService.Initialize(contentListView);
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

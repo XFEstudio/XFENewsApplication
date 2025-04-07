@@ -9,7 +9,9 @@ using XFENewsApplication.Core.Models;
 using XFENewsApplication.Core.Utilities.Helpers;
 using XFENewsApplication.Implements.Services;
 using XFENewsApplication.Interface.Services;
+using XFENewsApplication.Models;
 using XFENewsApplication.Profiles.CrossVersionProfiles;
+using XFENewsApplication.Utilities.Helper;
 
 namespace XFENewsApplication.ViewModels;
 
@@ -22,15 +24,16 @@ public partial class NewsViewPageViewModel : ViewModelBase
     private List<NewsSource> newsList = [];
     public INavigationParameterService<string> NavigationParameterService { get; set; } = ServiceManager.GetService<INavigationParameterService<string>>();
     public INavigationViewService? NavigationViewService { get; set; } = ServiceManager.GetService<INavigationViewService>();
-    public IListViewService ListViewService { get; set; } = ServiceManager.GetService<IListViewService>();
+    public IListViewService NewsListViewService { get; set; } = ServiceManager.GetService<IListViewService>();
+    public IListViewService ContentListViewService { get; set; } = ServiceManager.GetService<IListViewService>();
     public IDialogService DialogService { get; set; } = ServiceManager.GetService<IDialogService>();
-    public IWebViewService WebViewService { get; set; } = new WebViewService();
     public ObservableCollection<NewsSource> NewsList { get; } = [];
+    public ObservableCollection<ArticlePart> ContentList { get; } = [];
 
     public NewsViewPageViewModel()
     {
         NavigationParameterService.ParameterChange += NavigationParameterService_ParameterChange;
-        ListViewService.SelectionChanged += ListViewService_SelectionChanged;
+        NewsListViewService.SelectionChanged += ListViewService_SelectionChanged;
     }
 
     private async void ListViewService_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -39,18 +42,15 @@ public partial class NewsViewPageViewModel : ViewModelBase
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0");
         try
         {
-            if (ListViewService.ListView.SelectedItem is NewsSource newsSource)
+            if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
             {
                 var result = await client.GetStringAsync($"https://assets.msn.cn/content/view/v2/Detail/zh-cn/{newsSource.ID}");
-                var document = JsonDocument.Parse(result);
-                await WebViewService.WebView.EnsureCoreWebView2Async();
-                WebViewService.NavigateToString($"<h1>{document.RootElement.GetProperty("title")}</h1>\n{document.RootElement.GetProperty("body")}");
+                LoadContentList(ArticleDisplayHelper.ConvertToArticlePart(result));
             }
         }
         catch (Exception ex)
         {
-            await WebViewService.WebView.EnsureCoreWebView2Async();
-            WebViewService.NavigateToString($"<h1>{ex.Message}</h1>\n<p>{ex}</p>");
+            ServiceManager.GetGlobalService<IMessageService>()?.ShowMessage(ex.Message, "无法获取新闻", InfoBarSeverity.Warning);
         }
     }
 
@@ -71,6 +71,13 @@ public partial class NewsViewPageViewModel : ViewModelBase
     {
         foreach (var news in newsSources)
             NewsList.Add(news);
+    }
+
+    private void LoadContentList(IEnumerable<ArticlePart> articleParts)
+    {
+        ContentList.Clear();
+        foreach (var article in articleParts)
+            ContentList.Add(article);
     }
 
     [RelayCommand]

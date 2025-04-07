@@ -64,9 +64,7 @@
     <Using Include="Microsoft.UI.Xaml.Controls" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Profiles\CacheProfiles\" />
-    <Folder Include="Utilities\Helper\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XFENewsApplication.Core\XFENewsApplication.Core.csproj" />
