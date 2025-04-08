@@ -35,7 +35,24 @@
                         <ComboBoxItem Content="跟随系统" Tag="Default"/>
                     </ComboBox>
                 </controls:SettingsCard>
-                <TextBlock Text="路径 &amp; 缓存" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+                <TextBlock Text="通用" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+                <controls:SettingsCard Header="自启动" Description="开机之后自动启动应用">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE7E8;"/>
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch x:Name="autoStartToggleSwitch" IsOn="{x:Bind ViewModel.IsAutoStartEnable, Mode=TwoWay}"/>
+                </controls:SettingsCard>
+                <TextBlock Text="路径 &amp; 存储" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+                <controls:SettingsCard Header="历史记录上限" Description="储存的历史浏览记录的条数上限">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE81C;"/>
+                    </controls:SettingsCard.HeaderIcon>
+                    <ComboBox x:Name="historySaveModeComboBox" Tag="XFENewsApplication.Profiles.CrossVersionProfiles.UserProfile.HistorySaveMode">
+                        <ComboBoxItem Content="100条" Tag="OneHundred"/>
+                        <ComboBoxItem Content="1000条" Tag="OneThousand"/>
+                        <ComboBoxItem Content="无上限" Tag="Unlimited"/>
+                    </ComboBox>
+                </controls:SettingsCard>
                 <controls:SettingsCard Header="缓存目录" Description="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}" IsClickEnabled="True" Command="{x:Bind ViewModel.OpenPathCommand}" CommandParameter="{x:Bind ViewModel.AppCacheDirectory, Mode=OneWay}">
                     <controls:SettingsCard.ActionIcon>
                         <FontIcon Glyph="&#xE8A7;"/>

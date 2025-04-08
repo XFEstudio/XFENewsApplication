@@ -16,6 +16,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\news.ico" />
     <None Remove="Views\AppShellPage.xaml" />
     <None Remove="Views\NewsViewPage.xaml" />
     <None Remove="Views\SettingPage.xaml" />
@@ -55,7 +56,7 @@
     <PackageReference Include="XFEExtension.NetCore.TodoHighLight" Version="1.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
-    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.6" />
+    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.7" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="XFENewsApplication.ViewModels" />
@@ -98,5 +99,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>Assets\news.ico</ApplicationIcon>
+    <AssemblyName>News</AssemblyName>
   </PropertyGroup>
 </Project>

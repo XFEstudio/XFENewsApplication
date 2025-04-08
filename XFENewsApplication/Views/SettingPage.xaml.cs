@@ -1,4 +1,5 @@
 using XFEExtension.NetCore.WinUIHelper.Utilities.Helper;
+using XFENewsApplication.Models;
 
 namespace XFENewsApplication.Views;
 
@@ -15,6 +16,7 @@ public sealed partial class SettingPage : Page
         this.InitializeComponent();
         ViewModel.DialogService.RegisterDialog(cleanCacheContentDialog);
         ViewModel.SettingService.AddComboBox(appThemeComboBox, ProfileHelper.GetEnumProfileSaveFunc<ElementTheme>(), ProfileHelper.GetEnumProfileLoadFuncForComboBox());
+        ViewModel.SettingService.AddComboBox(historySaveModeComboBox, ProfileHelper.GetEnumProfileSaveFunc<HistorySaveMode>(), ProfileHelper.GetEnumProfileLoadFuncForComboBox());
         ViewModel.SettingService.Initialize();
         ViewModel.SettingService.RegisterEvents();
     }

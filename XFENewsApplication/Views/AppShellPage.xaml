@@ -43,6 +43,16 @@
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="收藏" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="Favorite">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE728;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="历史记录" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="History">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE81C;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="设置" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.SettingPage">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE713;"/>

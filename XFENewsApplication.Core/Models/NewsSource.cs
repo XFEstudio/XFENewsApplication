@@ -9,4 +9,5 @@ public class NewsSource
     public string? PublishTime { get; set; }
     public string? Abstract { get; set; }
     public string? ImageUrl { get; set; }
+    public required string Source { get; set; }
 }
