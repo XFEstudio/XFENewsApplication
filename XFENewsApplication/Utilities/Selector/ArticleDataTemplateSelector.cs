@@ -7,6 +7,7 @@ public partial class ArticleDataTemplateSelector : DataTemplateSelector
 {
     public DataTemplate? DefaultDataTemplate { get; set; }
     public DataTemplate? TextDataTemplate { get; set; }
+    public DataTemplate? AuthorDataTemplate { get; set; }
     public DataTemplate? TitleDataTemplate { get; set; }
     public DataTemplate? QuoteDataTemplate { get; set; }
     public DataTemplate? CustomTextDataTemplate { get; set; }
@@ -27,6 +28,8 @@ public partial class ArticleDataTemplateSelector : DataTemplateSelector
             }
             if (articlePart is ImageArticlePart)
                 return ImageDataTemplate;
+            if (articlePart is AuthorArticlePart)
+                return AuthorDataTemplate;
             return TextDataTemplate;
         }
         return DefaultDataTemplate;

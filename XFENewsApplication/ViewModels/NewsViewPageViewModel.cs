@@ -106,6 +106,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
                 IsSideBarMoreContentLoadingVisible = true;
                 break;
             case "Favorite":
+                IsSideBarMoreContentLoadingVisible = false;
                 if (NavigationViewService is not null)
                     NavigationViewService.ContentMargin = new(0, 24, 0, 0);
                 LoadNewsSource(UserProfile.FavoriteArticleList.Select(favorite => favorite.NewsSource));
@@ -114,6 +115,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
                 IsContentLoadingVisible = false;
                 break;
             case "History":
+                IsSideBarMoreContentLoadingVisible = false;
                 if (NavigationViewService is not null)
                     NavigationViewService.ContentMargin = new(0, 24, 0, 0);
                 LoadNewsSource(UserProfile.HistoryArticleList);
@@ -214,7 +216,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
         isLoadingNews = true;
         var tokenSource = new CancellationTokenSource();
         TokenSource = tokenSource;
-        var result = await ClimbHelper.ClimbMSNNews(tokenSource.Token, skip, lastCardCount);
+        var result = await ClimbHelper.ClimbMSNNews(tokenSource.Token, skip, lastCardCount, servedCardCount);
         if (result.Success)
         {
             newsList.AddRange(result.NewsSourceList);
@@ -275,6 +277,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
                     NewsSource = newsSource,
                     ArticleContent = currentNewsContent ?? string.Empty
                 });
+                UserProfile.SaveProfile();
                 MessageService?.ShowMessage("已添加到收藏夹", "收藏成功", InfoBarSeverity.Success);
             }
         }
@@ -283,6 +286,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
             if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
             {
                 UserProfile.FavoriteArticleList.Remove(UserProfile.FavoriteArticleList.First(favorite => favorite.NewsSource.Url == newsSource.Url));
+                UserProfile.SaveProfile();
                 MessageService?.ShowMessage("已从收藏夹移除", "取消收藏");
             }
         }

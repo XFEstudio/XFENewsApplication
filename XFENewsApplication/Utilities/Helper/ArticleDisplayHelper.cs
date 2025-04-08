@@ -14,17 +14,30 @@ public static class ArticleDisplayHelper
         var articleParts = new List<ArticlePart>();
         var imageDictionary = new Dictionary<string, string>();
         var document = JsonDocument.Parse(newsDocument);
+        var title = document.RootElement.GetProperty("title").ToString();
         articleParts.Add(new TextArticlePart
         {
             FontSize = 40,
             FontWeight = FontWeights.Bold,
-            Content = document.RootElement.GetProperty("title").ToString()
+            Content = title
         });
+        if (document.RootElement.TryGetProperty("provider", out var provider))
+        {
+            var providerName = provider.GetProperty("name").ToString();
+            articleParts.Add(new AuthorArticlePart
+            {
+                Content = provider.GetProperty("logo").GetProperty("url").ToString(),
+                PublishDateTime = GetRelativeTimeDescription(document.RootElement.GetProperty("publishedDateTime").ToString()),
+                ReadTime = document.RootElement.TryGetProperty("readTimeMin", out var readTime) && readTime.GetInt32() > 0 ? readTime.ToString() : string.Empty,
+                ProviderName = providerName,
+                AuthorName = document.RootElement.TryGetProperty("authors", out var authors) && authors.EnumerateArray().Any() ? string.Join(", ", authors.EnumerateArray().Select(x => x.GetProperty("name").ToString())) : providerName
+            });
+        }
         foreach (var imageNode in document.RootElement.GetProperty("imageResources").EnumerateArray())
             imageDictionary.Add(imageNode.GetProperty("cmsId").ToString(), imageNode.GetProperty("url").ToString());
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(document.RootElement.GetProperty("body").ToString());
-        AnalysisMSNDocument(articleParts, imageDictionary, htmlDocument.DocumentNode.ChildNodes, htmlDocument.DocumentNode);
+        AnalysisMSNDocument(articleParts, title, imageDictionary, htmlDocument.DocumentNode.ChildNodes, htmlDocument.DocumentNode);
         return articleParts;
     }
 
@@ -48,7 +61,7 @@ public static class ArticleDisplayHelper
         return customTextArticlePart;
     }
 
-    private static void AnalysisMSNDocument(List<ArticlePart> articleParts, Dictionary<string, string> imageDictionary, HtmlNodeCollection htmlNodes, HtmlNode parentNode)
+    private static void AnalysisMSNDocument(List<ArticlePart> articleParts, string title, Dictionary<string, string> imageDictionary, HtmlNodeCollection htmlNodes, HtmlNode parentNode)
     {
         foreach (var node in htmlNodes)
         {
@@ -57,14 +70,21 @@ public static class ArticleDisplayHelper
                 case "img":
                     articleParts.Add(new ImageArticlePart
                     {
-                        Content = imageDictionary[node.GetAttributeValue("data-document-id", string.Empty).Replace("\"", string.Empty)]
+                        Content = imageDictionary[node.GetAttributeValue("data-document-id", string.Empty).Replace("\"", string.Empty)],
+                        From = title
                     });
                     break;
                 case "#text":
                     switch (parentNode.Name)
                     {
                         case "p":
-                            var customTextArticlePart = CheckLastArticlePart(articleParts, parentNode, new Run
+                            CheckLastArticlePart(articleParts, parentNode, new Run
+                            {
+                                Text = node.InnerText
+                            });
+                            break;
+                        case "span":
+                            CheckLastArticlePart(articleParts, parentNode.ParentNode, new Run
                             {
                                 Text = node.InnerText
                             });
@@ -150,9 +170,48 @@ public static class ArticleDisplayHelper
                     break;
                 default:
                     if (node.HasChildNodes)
-                        AnalysisMSNDocument(articleParts, imageDictionary, node.ChildNodes, node);
+                        AnalysisMSNDocument(articleParts, title, imageDictionary, node.ChildNodes, node);
                     break;
             }
         }
+    }
+
+    public static string GetRelativeTimeDescription(DateTime time)
+    {
+        var now = DateTime.Now;
+        var span = now - time;
+
+        if (span.TotalSeconds < 60)
+        {
+            return "现在";
+        }
+        else if (span.TotalMinutes < 60)
+        {
+            int minutes = (int)span.TotalMinutes;
+            return $"{minutes} 分钟前";
+        }
+        else if (span.TotalHours < 24)
+        {
+            int hours = (int)span.TotalHours;
+            return $"{hours} 小时前";
+        }
+        else if (span.TotalDays < 7)
+        {
+            int days = (int)span.TotalDays;
+            return $"{days} 天前";
+        }
+        else
+        {
+            return time.ToString("yyyy年MM月dd日 HH:mm");
+        }
+    }
+
+    public static string GetRelativeTimeDescription(string time)
+    {
+        if (DateTime.TryParse(time, out var dateTime))
+        {
+            return GetRelativeTimeDescription(dateTime);
+        }
+        return "暂无时间";
     }
 }
