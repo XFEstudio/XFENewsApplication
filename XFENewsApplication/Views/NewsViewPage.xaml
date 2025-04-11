@@ -53,6 +53,33 @@
         <DataTemplate x:Key="CustomTextDataTemplate" x:DataType="model:CustomTextArticlePart">
             <ContentPresenter Content="{x:Bind CustomTextBlock}"/>
         </DataTemplate>
+        <DataTemplate x:Key="FlipImageDataTemplate" x:DataType="model:FlipImageArticlePart">
+            <Grid HorizontalAlignment="Center" Margin="0,10">
+                <Border Margin="1" CornerRadius="8" Background="{ThemeResource FocusStrokeColorOuterBrush}"/>
+                <Image MaxWidth="950" MaxHeight="500" Margin="10" Source="{Binding ElementName=imageFlipView, Path=SelectedItem, Converter={StaticResource URLImageConverter}}"/>
+                <Border MaxWidth="950" MaxHeight="500" CornerRadius="8" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+                    <FlipView x:Name="imageFlipView" ItemsSource="{x:Bind Images}" IsTapEnabled="True" Tapped="imageFlipView_Tapped">
+                        <FlipView.ItemTemplate>
+                            <DataTemplate x:DataType="model:FlipImage">
+                                <Grid>
+                                    <Image Source="{x:Bind ImageUrl, Converter={StaticResource URLImageConverter}}"/>
+                                    <Border x:Name="infomationBorder" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" PointerEntered="Border_PointerEntered" PointerExited="Border_PointerExited" VerticalAlignment="Bottom" Padding="10">
+                                        <Border.OpacityTransition>
+                                            <ScalarTransition/>
+                                        </Border.OpacityTransition>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Margin="0,10" Text="{x:Bind Title}" Visibility="{x:Bind Title, Converter={StaticResource StringEmptyVisibilityConverter}}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                            <TextBlock Margin="0,5" Text="{x:Bind Attribution}" Visibility="{x:Bind Attribution, Converter={StaticResource StringEmptyVisibilityConverter}}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondary}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{x:Bind Description}" Visibility="{x:Bind Description, Converter={StaticResource StringEmptyVisibilityConverter}}" FontSize="15" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </FlipView.ItemTemplate>
+                    </FlipView>
+                </Border>
+            </Grid>
+        </DataTemplate>
         <DataTemplate x:Key="ImageDataTemplate" x:DataType="model:ImageArticlePart">
             <Grid HorizontalAlignment="Center" Margin="0,10">
                 <Border Margin="1" CornerRadius="8" Background="{ThemeResource FocusStrokeColorOuterBrush}"/>
@@ -68,7 +95,7 @@
                 </Border>
             </Grid>
         </DataTemplate>
-        <selector:ArticleDataTemplateSelector x:Key="ArticleDataTemplateSelector" DefaultDataTemplate="{StaticResource TextDataTemplate}" TextDataTemplate="{StaticResource TextDataTemplate}" ImageDataTemplate="{StaticResource ImageDataTemplate}" TitleDataTemplate="{StaticResource TitleDataTemplate}" QuoteDataTemplate="{StaticResource QuoteDataTemplate}" CustomTextDataTemplate="{StaticResource CustomTextDataTemplate}" AuthorDataTemplate="{StaticResource AuthorDataTemplate}"/>
+        <selector:ArticleDataTemplateSelector x:Key="ArticleDataTemplateSelector" DefaultDataTemplate="{StaticResource TextDataTemplate}" TextDataTemplate="{StaticResource TextDataTemplate}" ImageDataTemplate="{StaticResource ImageDataTemplate}" TitleDataTemplate="{StaticResource TitleDataTemplate}" QuoteDataTemplate="{StaticResource QuoteDataTemplate}" CustomTextDataTemplate="{StaticResource CustomTextDataTemplate}" AuthorDataTemplate="{StaticResource AuthorDataTemplate}" FlipImageDataTemplate="{StaticResource FlipImageDataTemplate}"/>
     </Page.Resources>
 
     <Grid>
@@ -77,9 +104,17 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <ContentDialog x:Name="previewImageContentDialog" PrimaryButtonText="保存" SecondaryButtonText="取消">
+            <Image Source="{x:Bind ViewModel.PreviewImageUrl, Mode=OneWay, Converter={StaticResource URLImageConverter}}"/>
+        </ContentDialog>
         <Border x:Name="sideBar" MinWidth="300" MaxWidth="800" Width="{x:Bind ViewModel.SideBarWidth, Mode=TwoWay}">
             <Grid>
-                <ListView x:Name="newsSourceListView" ItemsSource="{x:Bind ViewModel.NewsList}" SelectionMode="Single" SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}" Margin="0,5,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <AutoSuggestBox Margin="8,0,10,10" HorizontalAlignment="Stretch" PlaceholderText="搜索新闻" QueryIcon="Find" Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}"/>
+                <ListView Grid.Row="1" x:Name="newsSourceListView" ItemsSource="{x:Bind ViewModel.NewsList}" SelectionMode="Single" SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}" Margin="0,5,0,0">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="coremodel:NewsSource">
                             <StackPanel Orientation="Vertical" Padding="5,24" Spacing="12">
@@ -96,16 +131,14 @@
                     </ListView.ItemContainerStyle>
                     <ListView.Footer>
                         <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                            <Border Visibility="{x:Bind ViewModel.IsSideBarMoreContentLoadingVisible, Mode=OneWay}" Margin="4,0,5,10" CornerRadius="0,0,10,10" Background="{ThemeResource AccentFillColorDefaultBrush}">
-                                <StackPanel Margin="0,10,0,10" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
-                                    <ProgressRing Width="30" Height="30" IsIndeterminate="True" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"/>
-                                    <TextBlock Text="更多精彩内容加载中" FontSize="18" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"/>
-                                </StackPanel>
-                            </Border>
+                            <StackPanel Visibility="{x:Bind ViewModel.IsSideBarMoreContentLoadingVisible, Mode=OneWay}" Margin="0,12,0,32" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="10">
+                                <ProgressRing Width="20" Height="20" IsIndeterminate="True"/>
+                                <TextBlock Text="加载中......" FontSize="12" Foreground="{ThemeResource TextFillColorDisabled}"/>
+                            </StackPanel>
                         </Grid>
                     </ListView.Footer>
                 </ListView>
-                <Border Visibility="{x:Bind ViewModel.IsSideBarLoadingVisible, Mode=OneWay}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Border Grid.RowSpan="2" Visibility="{x:Bind ViewModel.IsSideBarLoadingVisible, Mode=OneWay}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                     <ProgressBar Width="200" IsIndeterminate="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
             </Grid>

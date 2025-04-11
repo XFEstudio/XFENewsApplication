@@ -12,6 +12,7 @@ public partial class ArticleDataTemplateSelector : DataTemplateSelector
     public DataTemplate? QuoteDataTemplate { get; set; }
     public DataTemplate? CustomTextDataTemplate { get; set; }
     public DataTemplate? ImageDataTemplate { get; set; }
+    public DataTemplate? FlipImageDataTemplate { get; set; }
     protected override DataTemplate? SelectTemplateCore(object item)
     {
         if (item is ArticlePart articlePart)
@@ -30,6 +31,8 @@ public partial class ArticleDataTemplateSelector : DataTemplateSelector
                 return ImageDataTemplate;
             if (articlePart is AuthorArticlePart)
                 return AuthorDataTemplate;
+            if (articlePart is FlipImageArticlePart)
+                return FlipImageDataTemplate;
             return TextDataTemplate;
         }
         return DefaultDataTemplate;

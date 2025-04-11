@@ -33,6 +33,25 @@ public static class ArticleDisplayHelper
                 AuthorName = document.RootElement.TryGetProperty("authors", out var authors) && authors.EnumerateArray().Any() ? string.Join(", ", authors.EnumerateArray().Select(x => x.GetProperty("name").ToString())) : providerName
             });
         }
+        if (document.RootElement.TryGetProperty("slides", out var slides) && slides.EnumerateArray().Any())
+        {
+            var flipImages = new List<FlipImage>();
+            foreach (var slide in slides.EnumerateArray())
+            {
+                var imageProperty = slide.GetProperty("image");
+                flipImages.Add(new()
+                {
+                    ImageUrl = imageProperty.GetProperty("url").ToString(),
+                    Description = imageProperty.TryGetProperty("caption", out var description) ? description.ToString() : string.Empty,
+                    Attribution = imageProperty.TryGetProperty("attribution", out var attribution) ? attribution.ToString() : string.Empty,
+                    Title = slide.TryGetProperty("title", out var titleProperty) ? titleProperty.ToString() : string.Empty
+                });
+            }
+            articleParts.Add(new FlipImageArticlePart
+            {
+                Images = flipImages
+            });
+        }
         foreach (var imageNode in document.RootElement.GetProperty("imageResources").EnumerateArray())
             imageDictionary.Add(imageNode.GetProperty("cmsId").ToString(), imageNode.GetProperty("url").ToString());
         var htmlDocument = new HtmlDocument();
@@ -90,15 +109,12 @@ public static class ArticleDisplayHelper
                             });
                             break;
                         case "strong":
-                            if (parentNode.ParentNode.Name == "p")
+                            var bold = new Bold();
+                            bold.Inlines.Add(new Run
                             {
-                                var bold = new Bold();
-                                bold.Inlines.Add(new Run
-                                {
-                                    Text = node.InnerText
-                                });
-                                CheckLastArticlePart(articleParts, parentNode.ParentNode, bold);
-                            }
+                                Text = node.InnerText
+                            });
+                            CheckLastArticlePart(articleParts, parentNode.ParentNode, bold);
                             break;
                         case "blockquote":
                             if (node.InnerText.IsNullOrWhiteSpace())
