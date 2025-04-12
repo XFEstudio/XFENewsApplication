@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Text;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
+using WinRT.Interop;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.WinUIHelper.Interface.Services;
 using XFEExtension.NetCore.WinUIHelper.Utilities;
@@ -316,25 +318,23 @@ public partial class NewsViewPageViewModel : ViewModelBase
     void Share()
     {
         var dataTransferManager = DataTransferManagerHelper.GetForWindow();
-        dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-        DataTransferManagerHelper.ShowShareUIForWindow(WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow));
-    }
-
-    private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
-    {
-        if (args.Request is DataRequest dataRequest)
+        dataTransferManager.DataRequested += (sender, args) =>
         {
-            if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
+            if (args.Request is DataRequest dataRequest)
             {
-                dataRequest.Data.Properties.Title = newsSource.Title;
-                dataRequest.Data.Properties.Description = newsSource.Abstract;
-                dataRequest.Data.SetWebLink(new Uri(newsSource.Url));
+                if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
+                {
+                    dataRequest.Data.Properties.Title = newsSource.Title;
+                    dataRequest.Data.Properties.Description = newsSource.Abstract;
+                    dataRequest.Data.SetWebLink(new Uri(newsSource.Url));
+                }
+                else
+                {
+                    dataRequest.FailWithDisplayText("没有选中任何新闻");
+                }
             }
-            else
-            {
-                dataRequest.FailWithDisplayText("没有选中任何新闻");
-            }
-        }
+        };
+        DataTransferManagerHelper.ShowShareUIForWindow(WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow));
     }
 
     [RelayCommand]
@@ -362,5 +362,85 @@ public partial class NewsViewPageViewModel : ViewModelBase
                 MessageService?.ShowMessage("已从收藏夹移除", "取消收藏");
             }
         }
+    }
+
+    [RelayCommand]
+    async Task ViewPicture(string imageUrl)
+    {
+        PreviewImageUrl = imageUrl;
+        if (await DialogService.ShowDialog("previewImageContentDialog") == ContentDialogResult.Primary)
+        {
+            await SavePicture(imageUrl);
+        }
+    }
+
+    [RelayCommand]
+    async Task SavePicture(string imageUrl)
+    {
+        var imageName = imageUrl.Split('/').Last();
+        var imageType = Path.HasExtension(imageName) ? Path.GetExtension(imageName) : ".png";
+        var savePicker = new FileSavePicker
+        {
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+            DefaultFileExtension = imageType,
+            FileTypeChoices =
+                {
+                    { "PNG格式", new List<string> { ".png" } },
+                    { "JPG格式", new List<string> { ".jpg" } },
+                    { $"原格式-{imageType}", new List<string> { imageType } }
+                },
+            SuggestedFileName = $"{Path.GetFileNameWithoutExtension(imageName)}.png"
+        };
+        InitializeWithWindow.Initialize(savePicker, WindowNative.GetWindowHandle(App.MainWindow));
+        var file = await savePicker.PickSaveFileAsync();
+        if (file is not null)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+            var imageBytes = await client.GetByteArrayAsync(imageUrl);
+            using var stream = await file.OpenStreamForWriteAsync();
+            await stream.WriteAsync(imageBytes);
+            stream.Close();
+            MessageService?.ShowMessage($"已保存至：{file.Path}", "保存成功", null, InfoBarSeverity.Success, 5, true, "前往", (_, _) =>
+            {
+                Process.Start("explorer.exe", $"/select,\"{file.Path}\"");
+            });
+        }
+    }
+
+    [RelayCommand]
+    void SharePicture(string imageUrl)
+    {
+        var dataTransferManager = DataTransferManagerHelper.GetForWindow();
+        dataTransferManager.DataRequested += (sender, args) =>
+        {
+            if (args.Request is DataRequest dataRequest)
+            {
+                if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
+                {
+                    dataRequest.Data.Properties.Title = newsSource.Title;
+                    dataRequest.Data.Properties.Description = newsSource.Abstract;
+                    dataRequest.Data.SetBitmap(RandomAccessStreamReference.CreateFromUri(new Uri(imageUrl)));
+                }
+                else
+                {
+                    dataRequest.FailWithDisplayText("没有选中任何图片");
+                }
+            }
+        };
+        DataTransferManagerHelper.ShowShareUIForWindow(WindowNative.GetWindowHandle(App.MainWindow));
+    }
+
+    [RelayCommand]
+    static void ViewPictureInBrowser(string imageUrl)
+    {
+        if (imageUrl.IsNullOrEmpty())
+            return;
+        var uri = new Uri(imageUrl);
+        var processStartInfo = new ProcessStartInfo(uri.AbsoluteUri)
+        {
+            UseShellExecute = true
+        };
+        Process.Start(processStartInfo);
     }
 }

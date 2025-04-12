@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Assets\news.ico" />
     <None Remove="Views\AppShellPage.xaml" />
+    <None Remove="Views\HotSearchViewPage.xaml" />
     <None Remove="Views\NewsViewPage.xaml" />
     <None Remove="Views\SettingPage.xaml" />
   </ItemGroup>
@@ -69,6 +70,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XFENewsApplication.Core\XFENewsApplication.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\HotSearchViewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\SettingPage.xaml">
