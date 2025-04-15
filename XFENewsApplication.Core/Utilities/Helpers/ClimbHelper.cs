@@ -131,7 +131,7 @@ public static class ClimbHelper
 
     public static async Task<NewsResult> ClimbWeiboHotSearch(CancellationToken cancellationToken)
     {
-        int index = 0;
+        int index = 1;
         string message = "Success";
         var resultList = new List<NewsSource>();
         try
@@ -147,8 +147,10 @@ public static class ClimbHelper
                         Title = Regex.Unescape(node["desc"].ToString()),
                         Abstract = Regex.Unescape(desc_extr.ToString()),
                         Source = "微博热搜",
+                        ImageWidth = 30,
+                        ImageHeight = 30,
                         Index = index++,
-                        ImageUrl = node.TryGetValue("icon", out var icon) ? icon.ToString() : string.Empty
+                        ImageUrl = node.TryGetValue("icon", out var icon) ? Regex.Unescape(icon.ToString()) : string.Empty
                     });
             }
         }
@@ -167,7 +169,7 @@ public static class ClimbHelper
 
     public static async Task<NewsResult> ClimbBilibiliHotSearch(CancellationToken cancellationToken)
     {
-        int index = 0;
+        int index = 1;
         string message = "Success";
         var resultList = new List<NewsSource>();
         try
@@ -182,8 +184,10 @@ public static class ClimbHelper
                     Title = node["keyword"].ToString(),
                     Abstract = node["heat_score"].ToString(),
                     Source = "B站热搜",
+                    ImageWidth = 18,
+                    ImageHeight = 18,
                     Index = index++,
-                    ImageUrl = node.TryGetValue("icon", out var icon) ? icon.ToString() : string.Empty
+                    ImageUrl = node.TryGetValue("icon", out var icon) ? Regex.Unescape(icon.ToString()) : string.Empty
                 });
             }
         }
