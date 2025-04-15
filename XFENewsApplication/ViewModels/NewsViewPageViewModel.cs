@@ -311,7 +311,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
     void OpenInBrowser()
     {
         if (NewsListViewService.ListView.SelectedItem is NewsSource newsSource)
-            Process.Start(new ProcessStartInfo(newsSource.Url) { UseShellExecute = true });
+            Helper.OpenInBrowser(newsSource.Url);
     }
 
     [RelayCommand]
@@ -437,10 +437,6 @@ public partial class NewsViewPageViewModel : ViewModelBase
         if (imageUrl.IsNullOrEmpty())
             return;
         var uri = new Uri(imageUrl);
-        var processStartInfo = new ProcessStartInfo(uri.AbsoluteUri)
-        {
-            UseShellExecute = true
-        };
-        Process.Start(processStartInfo);
+        Helper.OpenInBrowser(uri.AbsoluteUri);
     }
 }

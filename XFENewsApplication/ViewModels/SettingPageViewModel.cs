@@ -54,7 +54,7 @@ public partial class SettingPageViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    static void OpenPath(string originalPath) => Process.Start("explorer.exe", originalPath);
+    static void OpenPath(string originalPath) => Helper.OpenPath(originalPath);
 
     [RelayCommand]
     async Task ClearCache()

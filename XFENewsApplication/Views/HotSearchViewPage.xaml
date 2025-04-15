@@ -14,19 +14,18 @@
     </Page.Resources>
 
     <Grid>
-        <ListView ItemsSource="{x:Bind ViewModel.HotSearchSource}" IsDoubleTapEnabled="True" DoubleTapped="ListView_DoubleTapped">
+        <ListView x:Name="hotSearchListView" ItemsSource="{x:Bind ViewModel.HotSearchSource}" SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}" IsDoubleTapEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="coremodel:NewsSource">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind Index}" VerticalAlignment="Center" FontSize="18"/>
-                        <Image MaxWidth="{x:Bind ImageWidth}" Height="{x:Bind ImageHeight}" Grid.Column="1" Source="{x:Bind ImageUrl, Converter={StaticResource URLImageConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <StackPanel Orientation="Horizontal" Grid.Column="2" Spacing="10" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Spacing="5" VerticalAlignment="Center">
                             <TextBlock Text="{x:Bind Title}" VerticalAlignment="Center" FontSize="15"/>
+                            <Image Margin="0,0,5,0" Height="{x:Bind ImageHeight}" Source="{x:Bind ImageUrl, Converter={StaticResource URLImageConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind Abstract}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorDisabled}"/>
                         </StackPanel>
                     </Grid>

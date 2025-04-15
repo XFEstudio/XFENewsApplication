@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
+﻿using Microsoft.UI.Xaml.Navigation;
 
 namespace XFENewsApplication.Views;
 
@@ -16,6 +15,7 @@ public sealed partial class HotSearchViewPage : Page
         Current = this;
         this.InitializeComponent();
         ViewModel.NavigationParameterService.Initialize(this);
+        ViewModel.ListViewService.Initialize(hotSearchListView);
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -28,10 +28,5 @@ public sealed partial class HotSearchViewPage : Page
     {
         base.OnNavigatedFrom(e);
         ViewModel.TokenSource?.Cancel();
-    }
-
-    private void ListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-
     }
 }

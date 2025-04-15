@@ -49,7 +49,20 @@ public static class ClimbHelper
     public static async Task<NewsResult> ClimbMSNNews(CancellationToken cancellationToken, int skip = 0, int lastCardCount = 0, int servedCardCount = 0)
     {
         if (MSNAPI.IsNullOrWhiteSpace())
-            MSNAPI = await GetMSNAPI(cancellationToken);
+            try
+            {
+                MSNAPI = await GetMSNAPI(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    NewsSourceList = [],
+                    Message = ex.Message,
+                    Count = 0,
+                    Success = false
+                };
+            }
         if (lastCardCount == 0 || skip == 0)
             return await ClimbMSNNews($"https://assets.msn.com/service/news/feed/pages/weblayout?User=&activityId=&adoffsets=c1:-1,c2:-1&apikey={MSNAPI}&audienceMode=adult&cm=zh-cn&colstatus=c1:0,c2:0&column=c2&colwidth=300&contentType=article&it=edgeid&l3v=2&layout=c2&memory=8&newsSkip=0&newsTop=48&ocid=hponeservicefeed&pgc=11&private=1&scn=APP_ANON&timeOut=1000&vpSize=721x674&wposchema=byregion", cancellationToken);
         else
@@ -184,7 +197,7 @@ public static class ClimbHelper
                     Title = node["keyword"].ToString(),
                     Abstract = node["heat_score"].ToString(),
                     Source = "B站热搜",
-                    ImageWidth = 18,
+                    ImageWidth = double.MaxValue,
                     ImageHeight = 18,
                     Index = index++,
                     ImageUrl = node.TryGetValue("icon", out var icon) ? Regex.Unescape(icon.ToString()) : string.Empty

@@ -36,17 +36,17 @@
                 <AutoSuggestBox QueryIcon="Find" PlaceholderText="搜索新闻源"/>
             </NavigationView.AutoSuggestBox>
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="MSN新闻" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="MSN">
+                <NavigationViewItem Content="MSN 新闻" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="MSN">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="https://www.msn.com/favicon.ico" Width="16" Height="16"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="微博热搜" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.HotSearchViewPage" add:NavigationAddition.NavigateParameter="Weibo">
+                <NavigationViewItem Content="微博 热搜" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.HotSearchViewPage" add:NavigationAddition.NavigateParameter="Weibo">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="https://m.weibo.cn/favicon.ico" Width="16" Height="16"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="BiliBili热搜" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.HotSearchViewPage" add:NavigationAddition.NavigateParameter="Bilibili">
+                <NavigationViewItem Content="BiliBili 热搜" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.HotSearchViewPage" add:NavigationAddition.NavigateParameter="Bilibili">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="https://www.bilibili.com/favicon.ico" Width="16" Height="16"/>
                     </NavigationViewItem.Icon>

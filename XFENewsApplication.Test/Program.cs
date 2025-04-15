@@ -1,9 +1,30 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 
 class Program
 {
+    //[SMTest(1)]
+    public static async Task TestCCTVClimb(int index)
+    {
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+        QueryableJsonNode jsonNode = await client.GetStringAsync($"https://news.cctv.com/2019/07/gaiban/cmsdatainterface/page/news_{index}.jsonp?cb=news");
+        foreach (var node in jsonNode["data"]["list"]["package:list", "brief", "title", "url"].PackageInListObject())
+        {
+            Console.WriteLine($"标题：{node["title"]}({node["url"]})\n{node["brief"]}\n");
+        }
+    }
+
+    [SMTest]
+    public static async Task TestM3u8()
+    {
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+        Console.WriteLine(await client.GetStringAsync($"https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do?pid=87b7efc3c7d84b45a288336e510e880e&client=flash&im=0&tsp=1744734329&vn=2049&vc=&uid=&wlan="));
+    }
+
     //[SMTest]
     public static async Task TestWeiboHotSearch()
     {
@@ -17,7 +38,7 @@ class Program
         }
     }
 
-    [SMTest]
+    //[SMTest]
     public static async Task TestBilibiliHotSearch()
     {
         using var client = new HttpClient();
