@@ -9,5 +9,6 @@ public class NewsSource
     public string? PublishTime { get; set; }
     public string? Abstract { get; set; }
     public string? ImageUrl { get; set; }
+    public int Index { get; set; }
     public string Source { get; set; } = string.Empty;
 }

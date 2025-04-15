@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
 using XFENewsApplication.Core.Models;
@@ -125,6 +126,77 @@ public static class ClimbHelper
             Success = true,
             Message = "Success",
             Count = totalCount
+        };
+    }
+
+    public static async Task<NewsResult> ClimbWeiboHotSearch(CancellationToken cancellationToken)
+    {
+        int index = 0;
+        string message = "Success";
+        var resultList = new List<NewsSource>();
+        try
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+            QueryableJsonNode jsonNode = await client.GetStringAsync("https://m.weibo.cn/api/container/getIndex?containerid=106003type%3D25%26t%3D3%26disable_hot%3D1%26filter_type%3Drealtimehot&luicode=20000061&lfid=5070140584495876", cancellationToken);
+            foreach (var node in jsonNode["data"]["cards"].GetChildNodes().First()["card_group"]["package:list", "desc", "desc_extr", "icon"].PackageInListObject())
+            {
+                if (node.TryGetValue("desc_extr", out var desc_extr) && !desc_extr.ToString().IsNullOrWhiteSpace())
+                    resultList.Add(new NewsSource
+                    {
+                        Title = Regex.Unescape(node["desc"].ToString()),
+                        Abstract = Regex.Unescape(desc_extr.ToString()),
+                        Source = "微博热搜",
+                        Index = index++,
+                        ImageUrl = node.TryGetValue("icon", out var icon) ? icon.ToString() : string.Empty
+                    });
+            }
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return new()
+        {
+            NewsSourceList = resultList,
+            Success = resultList.Count > 0,
+            Message = message,
+            Count = resultList.Count
+        };
+    }
+
+    public static async Task<NewsResult> ClimbBilibiliHotSearch(CancellationToken cancellationToken)
+    {
+        int index = 0;
+        string message = "Success";
+        var resultList = new List<NewsSource>();
+        try
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+            QueryableJsonNode jsonNode = await client.GetStringAsync("https://api.bilibili.com/x/web-interface/wbi/search/square?limit=50&platform=web&web_location=333.1007&w_rid=2247c88d4bf6d1fbd138018aa2c530d5&wts=1744698017", cancellationToken);
+            foreach (var node in jsonNode["data"]["trending"]["list"]["package:list", "keyword", "heat_score", "icon"].PackageInListObject())
+            {
+                resultList.Add(new NewsSource
+                {
+                    Title = node["keyword"].ToString(),
+                    Abstract = node["heat_score"].ToString(),
+                    Source = "B站热搜",
+                    Index = index++,
+                    ImageUrl = node.TryGetValue("icon", out var icon) ? icon.ToString() : string.Empty
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return new()
+        {
+            NewsSourceList = resultList,
+            Success = resultList.Count > 0,
+            Message = message,
+            Count = resultList.Count
         };
     }
 }
