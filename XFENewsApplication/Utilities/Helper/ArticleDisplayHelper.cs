@@ -93,8 +93,8 @@ public static class ArticleDisplayHelper
                         From = title
                     });
                     break;
-                case "video":
-                    articleParts.Add(new )
+                //case "video":
+                //    articleParts.Add(new )
                 case "#text":
                     switch (parentNode.Name)
                     {
