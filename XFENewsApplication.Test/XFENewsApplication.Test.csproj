@@ -13,4 +13,8 @@
     <PackageReference Include="XFEExtension.NetCore.XUnit" Version="2.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XFENewsApplication.Core\XFENewsApplication.Core.csproj" />
+  </ItemGroup>
+
 </Project>

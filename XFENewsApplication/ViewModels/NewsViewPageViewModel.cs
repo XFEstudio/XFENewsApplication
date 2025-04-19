@@ -114,11 +114,54 @@ public partial class NewsViewPageViewModel : ViewModelBase
                 }
                 else
                 {
+                    skip = 0;
+                    servedCardCount = 0;
+                    lastCardCount = 0;
+                    lastSelectedNews = 0;
                     await GetNews();
                 }
                 SelectedIndex = lastSelectedNews;
                 IsSideBarMoreContentLoadingVisible = true;
                 lastNewsSource = "MSN";
+                break;
+            case "CCTV":
+                if (NavigationViewService is not null)
+                {
+                    NavigationViewService.ContentMargin = new(0, 24, 0, 0);
+                    var stackPanel = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Spacing = 24
+                    };
+                    stackPanel.Children.Add(new Image
+                    {
+                        Source = new BitmapImage(new("https://news.cctv.com/favicon.ico"))
+                    });
+                    stackPanel.Children.Add(new TextBlock
+                    {
+                        Text = "CCTV新闻",
+                        FontSize = 28,
+                        FontWeight = FontWeights.SemiBold
+                    });
+                    NavigationViewService.Header = stackPanel;
+                }
+                if (lastNewsList.Count > 0 && lastNewsSource == "CCTV")
+                {
+                    newsList = lastNewsList;
+                    LoadNewsSource(newsList);
+                    NewsListViewService.ListView.ScrollIntoView(NewsList[lastSelectedNews], ScrollIntoViewAlignment.Leading);
+                }
+                else
+                {
+                    skip = 0;
+                    servedCardCount = 0;
+                    lastCardCount = 0;
+                    lastSelectedNews = 0;
+                    await GetNews();
+                }
+                SelectedIndex = lastSelectedNews;
+                IsSideBarMoreContentLoadingVisible = true;
+                lastNewsSource = "CCTV";
                 break;
             case "Favorite":
                 IsSideBarMoreContentLoadingVisible = false;
@@ -208,7 +251,17 @@ public partial class NewsViewPageViewModel : ViewModelBase
         {
             ContentList.Clear();
             currentNewsId = newsSource.ID;
-            LoadContentList(ArticleDisplayHelper.ConvertToArticlePart(article.ArticleContent));
+            switch (NavigationParameterService.Parameter)
+            {
+                case "MSN":
+                    LoadContentList(ArticleDisplayHelper.ConvertMSNNewsToArticlePart(article.ArticleContent));
+                    break;
+                case "CCTV":
+                    LoadContentList(ArticleDisplayHelper.ConvertCCTVToArticlePart(article.ArticleContent));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -236,7 +289,22 @@ public partial class NewsViewPageViewModel : ViewModelBase
                             currentNewsContent = result;
                             if (!CheckCurrentNewsSource(newsSource.ID))
                                 return;
-                            var articleParts = ArticleDisplayHelper.ConvertToArticlePart(result);
+                            var articleParts = ArticleDisplayHelper.ConvertMSNNewsToArticlePart(result);
+                            if (!CheckCurrentNewsSource(newsSource.ID))
+                                return;
+                            LoadContentList(articleParts);
+                            HistoryManager.Visit(newsSource.Url, newsSource);
+                            UserProfile.HistoryArticleList = [.. HistoryManager.Export()];
+                            IsContentLoadingVisible = false;
+                            return;
+                        case "CCTV":
+                            if (NavigationParameterService.Parameter == "CCTV")
+                                lastSelectedNews = SelectedIndex;
+                            result = await client.GetStringAsync(newsSource.Url);
+                            currentNewsContent = result;
+                            if (!CheckCurrentNewsSource(newsSource.ID))
+                                return;
+                            articleParts = ArticleDisplayHelper.ConvertCCTVToArticlePart(result);
                             if (!CheckCurrentNewsSource(newsSource.ID))
                                 return;
                             LoadContentList(articleParts);
@@ -272,13 +340,9 @@ public partial class NewsViewPageViewModel : ViewModelBase
             ContentList.Add(article);
     }
 
-    [RelayCommand]
-    async Task GetNews()
+    private async Task GetMSNNews(CancellationTokenSource tokenSource)
     {
-        isLoadingNews = true;
         int totalCount = 0;
-        var tokenSource = new CancellationTokenSource();
-        TokenSource = tokenSource;
         while (!tokenSource.IsCancellationRequested)
         {
             var result = await ClimbHelper.ClimbMSNNews(tokenSource.Token, skip, lastCardCount, servedCardCount);
@@ -303,6 +367,44 @@ public partial class NewsViewPageViewModel : ViewModelBase
             {
                 MessageService?.ShowMessage(result.Message ?? "未知原因", "无法获取新闻", InfoBarSeverity.Warning);
             }
+        }
+    }
+
+    private async Task GetCCTVNews(CancellationTokenSource tokenSource)
+    {
+        var result = await ClimbHelper.ClimbCCTVNews(tokenSource.Token, skip == 0 ? 1 : skip);
+        if (result.Success)
+        {
+            newsList.AddRange(result.NewsSourceList);
+            lastNewsList.AddRange(result.NewsSourceList);
+            if (!tokenSource.IsCancellationRequested)
+            {
+                LoadNewsSource(result.NewsSourceList);
+                skip++;
+            }
+        }
+        else
+        {
+            MessageService?.ShowMessage(result.Message ?? "未知原因", "无法获取新闻", InfoBarSeverity.Warning);
+        }
+    }
+
+    [RelayCommand]
+    async Task GetNews()
+    {
+        isLoadingNews = true;
+        var tokenSource = new CancellationTokenSource();
+        TokenSource = tokenSource;
+        switch (NavigationParameterService.Parameter)
+        {
+            case "MSN":
+                await GetMSNNews(tokenSource);
+                break;
+            case "CCTV":
+                await GetCCTVNews(tokenSource);
+                break;
+            default:
+                break;
         }
         isLoadingNews = false;
     }

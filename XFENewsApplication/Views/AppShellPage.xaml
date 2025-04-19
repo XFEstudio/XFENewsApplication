@@ -41,6 +41,11 @@
                         <ImageIcon Source="https://www.msn.com/favicon.ico" Width="16" Height="16"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="CCTV 新闻" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.NewsViewPage" add:NavigationAddition.NavigateParameter="CCTV">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="https://news.cctv.com/favicon.ico" Width="16" Height="16"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="微博 热搜" add:NavigationAddition.NavigateTo="XFENewsApplication.Views.HotSearchViewPage" add:NavigationAddition.NavigateParameter="Weibo">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="https://m.weibo.cn/favicon.ico" Width="16" Height="16"/>

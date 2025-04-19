@@ -31,6 +31,7 @@ public sealed partial class NewsViewPage : Page
     {
         base.OnNavigatedFrom(e);
         ViewModel.TokenSource?.Cancel();
+        ViewModel.SelectedIndex = -1;
         if (ViewModel.NavigationViewService is not null)
             ViewModel.NavigationViewService.ContentMargin = new(56, 24, 56, 0);
     }

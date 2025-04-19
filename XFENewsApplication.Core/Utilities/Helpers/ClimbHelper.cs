@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using XFEExtension.NetCore.StringExtension;
 using XFEExtension.NetCore.XFETransform.JsonConverter;
@@ -139,6 +140,32 @@ public static class ClimbHelper
             Success = true,
             Message = "Success",
             Count = totalCount
+        };
+    }
+
+    public static async Task<NewsResult> ClimbCCTVNews(CancellationToken cancellationToken, int skip = 1, string type = "news")
+    {
+        var resultList = new List<NewsSource>();
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0");
+        QueryableJsonNode jsonNode = await client.GetStringAsync($"https://news.cctv.com/2019/07/gaiban/cmsdatainterface/page/{type}_{skip}.jsonp?cb={type}");
+        foreach (var node in jsonNode["data"]["list"]["package:list", "brief", "title", "id", "url"].PackageInListObject())
+        {
+            resultList.Add(new NewsSource
+            {
+                Title = Regex.Unescape(node["title"].ToString()),
+                ID = node["id"].ToString(),
+                Url = Regex.Unescape(node["url"].ToString()),
+                Abstract = Regex.Unescape(node["brief"].ToString()),
+                Source = "CCTV"
+            });
+        }
+        return new()
+        {
+            NewsSourceList = resultList,
+            Success = resultList.Count > 0,
+            Message = resultList.Count > 0 ? "Success" : "没有获取到数据",
+            Count = resultList.Count
         };
     }
 

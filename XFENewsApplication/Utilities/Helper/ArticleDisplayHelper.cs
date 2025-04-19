@@ -1,7 +1,9 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Documents;
+using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using XFEExtension.NetCore.StringExtension;
 using XFENewsApplication.Models;
 
@@ -9,7 +11,24 @@ namespace XFENewsApplication.Utilities.Helper;
 
 public static class ArticleDisplayHelper
 {
-    public static List<ArticlePart> ConvertToArticlePart(string newsDocument)
+    public static List<ArticlePart> ConvertCCTVToArticlePart(string newsDocument)
+    {
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(newsDocument);
+        var articleParts = new List<ArticlePart>
+        {
+            new TextArticlePart
+            {
+                FontSize = 40,
+                FontWeight = FontWeights.Bold,
+                Content = (htmlDocument.DocumentNode.SelectSingleNode("/html/body/div[@id = 'page_body']/div/div/div[@class = 'title_area']/h1") ?? htmlDocument.DocumentNode.SelectSingleNode("//div[@class = 'page_wrap']/div/div[@class = 'title_area']/h1")).InnerText.Replace("\t", string.Empty).Replace(" ", string.Empty)
+            }
+        };
+        AnalysisMSNDocument(articleParts, articleParts[0].Content, [], (htmlDocument.DocumentNode.SelectSingleNode("/html/body/div[@id = 'page_body']/div/div/div[@class = 'content_area']") ?? htmlDocument.DocumentNode.SelectSingleNode("//div[@class = 'page_wrap']/div/div[@class = 'text_area']")).ChildNodes, htmlDocument.DocumentNode);
+        return articleParts;
+    }
+
+    public static List<ArticlePart> ConvertMSNNewsToArticlePart(string newsDocument)
     {
         var articleParts = new List<ArticlePart>();
         var imageDictionary = new Dictionary<string, string>();
@@ -89,7 +108,7 @@ public static class ArticleDisplayHelper
                 case "img":
                     articleParts.Add(new ImageArticlePart
                     {
-                        Content = imageDictionary[node.GetAttributeValue("data-document-id", string.Empty).Replace("\"", string.Empty)],
+                        Content = imageDictionary.Count > 0 ? imageDictionary[node.GetAttributeValue("data-document-id", string.Empty).Replace("\"", string.Empty)] : $"https:{node.GetAttributeValue("src", string.Empty)}",
                         From = title
                     });
                     break;
@@ -101,29 +120,37 @@ public static class ArticleDisplayHelper
                         case "p":
                             CheckLastArticlePart(articleParts, parentNode, new Run
                             {
-                                Text = node.InnerText
+                                Text = WebUtility.HtmlDecode(node.InnerText)
                             });
                             break;
                         case "span":
                             CheckLastArticlePart(articleParts, parentNode.ParentNode, new Run
                             {
-                                Text = node.InnerText
+                                Text = WebUtility.HtmlDecode(node.InnerText)
                             });
                             break;
                         case "strong":
                             var bold = new Bold();
                             bold.Inlines.Add(new Run
                             {
-                                Text = node.InnerText
+                                Text = WebUtility.HtmlDecode(node.InnerText)
                             });
                             CheckLastArticlePart(articleParts, parentNode.ParentNode, bold);
+                            break;
+                        case "em":
+                            var italic = new Italic();
+                            italic.Inlines.Add(new Run
+                            {
+                                Text = WebUtility.HtmlDecode(node.InnerText)
+                            });
+                            CheckLastArticlePart(articleParts, parentNode.ParentNode, italic);
                             break;
                         case "blockquote":
                             if (node.InnerText.IsNullOrWhiteSpace())
                                 continue;
                             articleParts.Add(new QuoteArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 36,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -131,7 +158,7 @@ public static class ArticleDisplayHelper
                         case "h1":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 68,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -139,7 +166,7 @@ public static class ArticleDisplayHelper
                         case "h2":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 48,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -147,7 +174,7 @@ public static class ArticleDisplayHelper
                         case "h3":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 36,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -155,7 +182,7 @@ public static class ArticleDisplayHelper
                         case "h4":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 28,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -163,7 +190,7 @@ public static class ArticleDisplayHelper
                         case "h5":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 20,
                                 FontWeight = FontWeights.SemiBold
                             });
@@ -171,18 +198,12 @@ public static class ArticleDisplayHelper
                         case "h6":
                             articleParts.Add(new TitleArticlePart
                             {
-                                Content = node.InnerText,
+                                Content = WebUtility.HtmlDecode(node.InnerText),
                                 FontSize = 16,
                                 FontWeight = FontWeights.SemiBold
                             });
                             break;
                         default:
-                            if (node.InnerText.IsNullOrWhiteSpace())
-                                continue;
-                            articleParts.Add(new TextArticlePart
-                            {
-                                Content = node.InnerText
-                            });
                             break;
                     }
                     break;
