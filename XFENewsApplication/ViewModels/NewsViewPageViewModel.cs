@@ -200,12 +200,14 @@ public partial class NewsViewPageViewModel : ViewModelBase
         {
             switch (NavigationParameterService.Parameter)
             {
-                case "MSN":
+                case "Favorite":
+                    break;
+                case "History":
+                    break;
+                default:
                     if ((!isLoadingNews || TokenSource is null || TokenSource.IsCancellationRequested) && SearchText.IsNullOrEmpty())
                         if (scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset < 300)
                             await GetNews();
-                    break;
-                default:
                     break;
             }
         }
@@ -251,7 +253,7 @@ public partial class NewsViewPageViewModel : ViewModelBase
         {
             ContentList.Clear();
             currentNewsId = newsSource.ID;
-            switch (NavigationParameterService.Parameter)
+            switch (article.NewsSource.Source)
             {
                 case "MSN":
                     LoadContentList(ArticleDisplayHelper.ConvertMSNNewsToArticlePart(article.ArticleContent));
