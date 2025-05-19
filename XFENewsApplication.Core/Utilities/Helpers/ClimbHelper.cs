@@ -90,7 +90,7 @@ public static class ClimbHelper
                         return;
                     using var document = JsonDocument.Parse(result);
                     int i = 0;
-                    foreach (var subNode in document.RootElement.GetProperty("sections").EnumerateArray().ElementAt(0).GetProperty("cards").EnumerateArray())
+                    foreach (var subNode in document.RootElement.GetProperty("sections").EnumerateArray().ElementAt(1).GetProperty("cards").EnumerateArray())
                     {
                         if (cancellationToken.IsCancellationRequested)
                             return;

@@ -3,7 +3,6 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Documents;
 using System.Net;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using XFEExtension.NetCore.StringExtension;
 using XFENewsApplication.Models;
 
@@ -131,6 +130,14 @@ public static class ArticleDisplayHelper
                             break;
                         case "strong":
                             var bold = new Bold();
+                            bold.Inlines.Add(new Run
+                            {
+                                Text = WebUtility.HtmlDecode(node.InnerText)
+                            });
+                            CheckLastArticlePart(articleParts, parentNode.ParentNode, bold);
+                            break;
+                        case "b":
+                            bold = new Bold();
                             bold.Inlines.Add(new Run
                             {
                                 Text = WebUtility.HtmlDecode(node.InnerText)

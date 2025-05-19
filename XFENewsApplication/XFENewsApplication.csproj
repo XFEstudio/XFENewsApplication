@@ -56,8 +56,8 @@
     <PackageReference Include="XFEExtension.NetCore.AutoPath" Version="1.0.1" />
     <PackageReference Include="XFEExtension.NetCore.TodoHighLight" Version="1.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250310001" />
-    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.7" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250410001-experimental1" />
+    <PackageReference Include="XFEExtension.NetCore.WinUIHelper" Version="1.0.7"/>
   </ItemGroup>
   <ItemGroup>
     <Using Include="XFENewsApplication.ViewModels" />
